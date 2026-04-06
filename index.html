@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDA-Pro: Guía Clínica Pediátrica</title>
+    
+    <!-- Configuración para convertir en App (PWA) -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon.png">
+    <meta name="theme-color" content="#14b8a6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="EDA-Pro">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <!-- Google Fonts: Montserrat e Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa', 100: '#ccfbf1', 500: '#14b8a6', 
+                            600: '#0d9488', 700: '#0f766e', 900: '#134e4a',
+                        },
+                        darkbg: '#0f172a',
+                        darkcard: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; }
+        .content-section { scroll-margin-top: 6rem; }
+        .prose p { margin-bottom: 1.25rem; line-height: 1.8; font-size: 1.05rem; }
+        .prose h3 { margin-top: 2rem; margin-bottom: 1rem; font-weight: 700; font-size: 1.3rem; color: #0f766e; }
+        .dark .prose h3 { color: #2dd4bf; }
+        .prose ul { list-style-type: none; padding-left: 0; margin-bottom: 1.5rem; }
+        .prose li { position: relative; padding-left: 1.5rem; margin-bottom: 0.75rem; line-height: 1.7; }
+        .prose li::before {
+            content: "•"; color: #14b8a6; font-weight: bold; position: absolute; left: 0; font-size: 1.2rem; top: -2px;
+        }
+        .prose strong { font-weight: 600; color: #111827; }
+        .dark .prose strong { color: #f9fafb; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-700 dark:bg-darkbg dark:text-slate-300 transition-colors duration-300">
+
+    <!-- Navbar -->
+    <header class="fixed top-0 w-full bg-white/90 dark:bg-darkcard/90 backdrop-blur-md shadow-sm z-50 h-16 flex items-center justify-between px-4 lg:px-8 border-b border-slate-200 dark:border-slate-700">
+        <div class="flex items-center gap-4">
+            <button id="mobile-menu-btn" class="lg:hidden text-slate-600 dark:text-slate-300 text-2xl focus:outline-none hover:text-brand-500 transition-colors">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="flex items-center gap-2">
+                <div class="bg-brand-500 text-white p-2 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-notes-medical text-xl"></i>
+                </div>
+                <h1 class="text-xl font-bold font-heading text-slate-800 dark:text-white tracking-tight">
+                    EDA<span class="text-brand-500">-Pro</span>
+                </h1>
+            </div>
+        </div>
+        
+        <!-- Toggle Modo Oscuro -->
+        <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all duration-200 shadow-sm border border-slate-200 dark:border-slate-600">
+            <i class="fas fa-moon dark:hidden text-lg"></i>
+            <i class="fas fa-sun hidden dark:block text-lg text-amber-400"></i>
+        </button>
+    </header>
+
+    <div class="flex pt-16 h-screen">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed lg:static w-72 h-[calc(100vh-4rem)] bg-white dark:bg-darkcard border-r border-slate-200 dark:border-slate-700 overflow-y-auto transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 shadow-lg lg:shadow-none pb-10">
+            <nav class="p-5 space-y-1.5 font-medium text-sm">
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-4 mt-2 px-3 font-heading">Navegación Clínica</p>
+                
+                <a href="#inicio" class="nav-link flex items-center px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-brand-50 dark:hover:bg-slate-700/50 hover:text-brand-600 dark:hover:text-brand-400 transition-all">
+                    <div class="w-8 flex justify-start"><i class="fas fa-house text-lg opacity-80"></i></div>
+                    <span>Definición y Concepto</span>
+                </a>
+                <a href="#epidemiologia" class="nav-link flex items-center px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-brand-50 dark:hover:bg-slate-700/50 hover:text-brand-600 dark:hover:text-brand-400 transition-all">
+                    <div class="w-8 flex justify-start"><i class="fas fa-chart-pie text-lg opacity-80"></i></div>
+                    <span>Epidemiología / APS</span>
+                </a>
+                <a href="#fisiologia" class="nav-link flex items-center px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-brand-50 dark:hover:bg-slate-700/50 hover:text-brand-600 dark:hover:text-brand-400 transition-all">
+                    <div class="w-8 flex justify-start"><i class="fas fa-microscope text-lg opacity-80"></i></div>
+                    <span>Fisiopatología</span>
+                </a>
+                <a href="#etiologia" class="nav-link flex items-center px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-brand-50 dark:hover:bg-slate-700/50 hover:text-brand-600 dark:hover:text-brand-400 transition-all">
+                    <div class="w-8 flex justify-start"><i class="fas fa-viruses text-lg opacity-80"></i></div>
+                    <span>Agentes Etiológicos</span>
+                </a>
+                <a href="#diagnostico" class="nav-link flex items-center px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-brand-50 dark:hover:bg-slate-700/50 hover:text-brand-600 dark:hover:text-brand-400 transition-all">
+                    <div class="w-8 flex justify-start"><i class="fas fa-stethoscope text-lg opacity-80"></i></div>
+                    <span>Evaluación Clínica</span>
+                </a>
+                <a href="#tratamiento" class="nav-link flex items-center px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-brand-50 dark:hover:bg-slate-700/50 hover:text-brand-600 dark:hover:text-brand-400 transition-all">
+                    <div class="w-8 flex justify-start"><i class="fas fa-kit-medical text-lg opacity-80"></i></div>
+                    <span>Protocolos de Manejo</span>
+                </a>
+                
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-4 mt-8 px-3 font-heading">Herramientas</p>
+                
+                <a href="#calculadora" class="nav-link flex items-center px-4 py-3 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 text-white shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5">
+                    <div class="w-8 flex justify-start"><i class="fas fa-calculator text-lg"></i></div>
+                    <span class="font-semibold">Calculadora de Líquidos</span>
+                </a>
+                <a href="#autoevaluacion" class="nav-link flex items-center px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-brand-50 dark:hover:bg-slate-700/50 hover:text-brand-600 dark:hover:text-brand-400 transition-all">
+                    <div class="w-8 flex justify-start"><i class="fas fa-brain text-lg opacity-80"></i></div>
+                    <span class="font-semibold">Autoevaluación</span>
+                </a>
+                <a href="#referencias" class="nav-link flex items-center px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-brand-50 dark:hover:bg-slate-700/50 hover:text-brand-600 dark:hover:text-brand-400 transition-all">
+                    <div class="w-8 flex justify-start"><i class="fas fa-book-open text-lg opacity-80"></i></div>
+                    <span>Referencias</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Overlay Mobile -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-30 hidden lg:hidden transition-opacity"></div>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto p-4 lg:p-10 w-full relative">
+            <div class="max-w-4xl mx-auto space-y-12 pb-24 prose-container">
+
+                <!-- HEADER TARJETA INTRO -->
+                <div class="bg-gradient-to-br from-brand-900 to-brand-700 rounded-3xl p-8 lg:p-12 text-white shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
+                        <i class="fas fa-staff-snake text-[20rem]"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <span class="inline-block py-1 px-3 rounded-full bg-brand-500/30 border border-brand-400/50 text-sm font-semibold tracking-wide mb-4">
+                            PEDIATRÍA Y APS
+                        </span>
+                        <h2 class="text-4xl lg:text-5xl font-extrabold font-heading mb-4 leading-tight">Enfermedades Diarreicas Agudas (EDA)</h2>
+                        <p class="text-brand-100 text-lg lg:text-xl max-w-2xl leading-relaxed">Guía de actuación clínica integral estructurada según los estándares actuales para el diagnóstico, evaluación y manejo terapéutico en edades pediátricas.</p>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN: INICIO -->
+                <section id="inicio" class="content-section prose dark:prose-invert max-w-none">
+                    <div class="bg-white dark:bg-darkcard p-8 lg:p-10 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/60">
+                        <h2 class="text-3xl font-heading font-bold text-slate-800 dark:text-white flex items-center gap-3 mb-6">
+                            <span class="bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 p-2 rounded-xl"><i class="fas fa-book-medical"></i></span>
+                            Definición y Conceptos Base
+                        </h2>
+                        
+                        <p>La <strong>Enfermedad Diarreica Aguda (EDA)</strong> se define clásicamente como la alteración en el patrón habitual de las deposiciones del lactante o niño, caracterizada por la disminución de la consistencia (líquidas o semilíquidas) y el aumento en la frecuencia (típicamente tres o más en un período de 24 horas). En lactantes alimentados con lactancia materna exclusiva, el patrón habitual puede ser de deposiciones blandas y frecuentes, por lo que el diagnóstico se basa en un <em>cambio súbito</em> de la consistencia o el aumento de la frecuencia normal.</p>
+                        
+                        <p>Generalmente, el episodio tiene un inicio brusco y una duración menor de 14 días. Cuando la diarrea supera los 14 días se clasifica como <strong>diarrea persistente</strong>, y si supera los 30 días, como <strong>diarrea crónica</strong>, las cuales conllevan otros enfoques diagnósticos y terapéuticos.</p>
+
+                        <div class="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 p-5 rounded-r-xl mt-6">
+                            <h4 class="text-amber-800 dark:text-amber-400 font-bold m-0 flex items-center gap-2">
+                                <i class="fas fa-triangle-exclamation"></i> Importancia Clínica
+                            </h4>
+                            <p class="text-amber-900 dark:text-amber-200 mt-2 mb-0 text-sm">
+                                El principal peligro de la EDA es la pérdida de agua y electrolitos, llevando a la <strong>deshidratación</strong>. La prevención del choque hipovolémico y el mantenimiento del estado nutricional son los pilares de la intervención médica, especialmente en la Atención Primaria de Salud.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN: EPIDEMIOLOGÍA -->
+                <section id="epidemiologia" class="content-section prose dark:prose-invert max-w-none">
+                    <div class="bg-white dark:bg-darkcard p-8 lg:p-10 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/60">
+                        <h2 class="text-3xl font-heading font-bold text-slate-800 dark:text-white flex items-center gap-3 mb-6">
+                            <span class="bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 p-2 rounded-xl"><i class="fas fa-globe-americas"></i></span>
+                            Epidemiología y Salud Pública
+                        </h2>
+                        
+                        <p>Las enfermedades diarreicas agudas constituyen un problema de salud pública de primera magnitud a nivel mundial, figurando sistemáticamente entre las principales causas de morbimortalidad en niños menores de 5 años. En sistemas de salud fundamentados en la prevención y la Atención Primaria, como el cubano, la estrategia radica en el control de factores de riesgo, la educación comunitaria y el tratamiento precoz.</p>
+                        
+                        <h3>Cadena Epidemiológica</h3>
+                        <p>La vía de transmisión primordial es la <strong>fecal-oral</strong>, que puede concretarse a través de la ingesta de agua o alimentos contaminados (vehículos), o por contacto directo persona a persona (manos contaminadas).</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                            <div class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-700">
+                                <h4 class="font-bold text-slate-800 dark:text-slate-200 mt-0 flex items-center gap-2"><i class="fas fa-shield-virus text-brand-500"></i> Factores del Huésped</h4>
+                                <ul class="text-sm mt-3">
+                                    <li>Ausencia de Lactancia Materna Exclusiva (LME).</li>
+                                    <li>Desnutrición o deficiencias de micronutrientes.</li>
+                                    <li>Edades extremas (mayor susceptibilidad en menores de 1 año).</li>
+                                    <li>Inmunodeficiencias congénitas o adquiridas.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-700">
+                                <h4 class="font-bold text-slate-800 dark:text-slate-200 mt-0 flex items-center gap-2"><i class="fas fa-faucet-drip text-blue-500"></i> Factores Ambientales</h4>
+                                <ul class="text-sm mt-3">
+                                    <li>Consumo de agua no potable o sin clorar.</li>
+                                    <li>Manejo inadecuado de excretas e higiene personal deficiente.</li>
+                                    <li>Manipulación y conservación incorrecta de alimentos.</li>
+                                    <li>Hacinamiento.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN: FISIOLOGÍA -->
+                <section id="fisiologia" class="content-section prose dark:prose-invert max-w-none">
+                    <div class="bg-white dark:bg-darkcard p-8 lg:p-10 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/60">
+                        <h2 class="text-3xl font-heading font-bold text-slate-800 dark:text-white flex items-center gap-3 mb-6">
+                            <span class="bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 p-2 rounded-xl"><i class="fas fa-dna"></i></span>
+                            Fisiopatología
+                        </h2>
+                        
+                        <p>El intestino sano absorbe fluidos a través del sistema de las vellosidades intestinales, acoplado al transporte de nutrientes (especialmente sodio y glucosa), mientras que las criptas secretan fluidos. En la EDA, este equilibrio se rompe, resultando en una pérdida neta de agua y electrolitos hacia la luz intestinal. Dependiendo del agente causal, se reconocen cuatro mecanismos patogénicos fundamentales:</p>
+
+                        <h3>1. Diarrea Osmótica</h3>
+                        <p>Se produce por la presencia de solutos no absorbibles u osmóticamente activos en la luz intestinal. Estos solutos "arrastran" agua hacia el intestino. Un ejemplo clásico es la <strong>intolerancia transitoria a la lactosa</strong> que frecuentemente sigue a una infección viral (por destrucción del borde en cepillo de los enterocitos donde reside la lactasa). <br><em>Características:</em> Mejora con el ayuno, el pH fecal suele ser ácido (< 5.5).</p>
+
+                        <h3>2. Diarrea Secretora</h3>
+                        <p>Causada por la activación de mensajeros intracelulares (como AMP cíclico o GMP cíclico) tras la unión de enterotoxinas bacterianas (ej. *Vibrio cholerae*, ETEC) a receptores del enterocito. Esto estimula la secreción activa de cloro hacia la luz e inhibe la absorción de sodio, arrastrando grandes cantidades de agua. <br><em>Características:</em> Es de gran volumen, muy acuosa y <strong>no cede con el ayuno</strong>.</p>
+
+                        <h3>3. Diarrea Inflamatoria / Invasiva</h3>
+                        <p>El agente patógeno invade y destruye el epitelio de la mucosa intestinal (ej. *Shigella*, *Salmonella*, *Campylobacter*, ECEI), generando una intensa respuesta inflamatoria, ulceración y exudación de moco, sangre y proteínas plasmáticas. <br><em>Características:</em> Produce el cuadro conocido como <strong>Disentería</strong> (diarrea con sangre y moco), usualmente acompañada de fiebre elevada, tenesmo y dolor abdominal cólico intenso.</p>
+
+                        <h3>4. Alteración de la Motilidad</h3>
+                        <p>El aumento de la motilidad intestinal disminuye el tiempo de contacto del contenido luminal con la superficie de absorción. Suele ser un factor concomitante en los procesos inflamatorios, aunque raramente es la única causa primaria en las infecciones pediátricas agudas.</p>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN: ETIOLOGÍA -->
+                <section id="etiologia" class="content-section prose dark:prose-invert max-w-none">
+                    <div class="bg-white dark:bg-darkcard p-8 lg:p-10 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/60">
+                        <h2 class="text-3xl font-heading font-bold text-slate-800 dark:text-white flex items-center gap-3 mb-6">
+                            <span class="bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 p-2 rounded-xl"><i class="fas fa-viruses"></i></span>
+                            Agentes Etiológicos Principales
+                        </h2>
+                        
+                        <p>La etiología de las EDAs varía según la región geográfica, el clima, el saneamiento y el estrato socioeconómico. No obstante, a nivel global, los virus representan la abrumadora mayoría de los casos pediátricos.</p>
+
+                        <div class="overflow-x-auto mt-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <table class="w-full text-left border-collapse min-w-[600px] text-sm md:text-base">
+                                <thead>
+                                    <tr class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200">
+                                        <th class="p-4 font-bold border-b dark:border-slate-700">Grupo</th>
+                                        <th class="p-4 font-bold border-b dark:border-slate-700">Agentes Patógenos</th>
+                                        <th class="p-4 font-bold border-b dark:border-slate-700">Perfil Clínico Característico</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <td class="p-4 font-semibold text-brand-600 dark:text-brand-400">Virus<br><span class="text-xs text-slate-400 font-normal">(70-80%)</span></td>
+                                        <td class="p-4"><strong>Rotavirus</strong> (Principal causa de EDA grave en lactantes), <strong>Norovirus</strong> (Brotes epidémicos, "gripe estomacal"), Adenovirus entérico, Astrovirus.</td>
+                                        <td class="p-4">Comienzo con vómitos prominentes, seguido de fiebre leve a moderada y deposiciones acuosas abundantes. Alto riesgo de deshidratación osmótica.</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <td class="p-4 font-semibold text-red-600 dark:text-red-400">Bacterias<br><span class="text-xs text-slate-400 font-normal">(10-20%)</span></td>
+                                        <td class="p-4"><em>E. coli</em> (ETEC, EPEC, EHEC, ECEI), <em>Campylobacter jejuni</em>, <em>Shigella spp.</em>, <em>Salmonella</em> no tifoidea, <em>Vibrio cholerae</em>.</td>
+                                        <td class="p-4">Cuadros más tóxicos, fiebre alta. Frecuente presencia de moco y sangre (disentería, especialmente por Shigella y ECEI). V. cholerae produce la clásica diarrea en "agua de arroz".</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <td class="p-4 font-semibold text-amber-600 dark:text-amber-400">Parásitos<br><span class="text-xs text-slate-400 font-normal">(< 10%)</span></td>
+                                        <td class="p-4"><em>Giardia lamblia</em> (Giardiasis), <em>Entamoeba histolytica</em> (Amebiasis), <em>Cryptosporidium parvum</em> (Severo en inmunodeprimidos).</td>
+                                        <td class="p-4">Evolución subaguda o prolongada. Giardia: deposiciones pálidas, fétidas, grasosas (esteatorrea). Entamoeba: disentería amebiana con dolor cólico y tenesmo marcado.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN: DIAGNÓSTICO -->
+                <section id="diagnostico" class="content-section prose dark:prose-invert max-w-none">
+                    <div class="bg-white dark:bg-darkcard p-8 lg:p-10 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/60">
+                        <h2 class="text-3xl font-heading font-bold text-slate-800 dark:text-white flex items-center gap-3 mb-6">
+                            <span class="bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 p-2 rounded-xl"><i class="fas fa-stethoscope"></i></span>
+                            Evaluación Clínica (Método Clínico)
+                        </h2>
+                        
+                        <p>En el manejo de la EDA, el diagnóstico etiológico (identificar el patógeno específico mediante cultivos) pasa a un segundo plano inicial frente al diagnóstico del <strong>estado de hidratación</strong>. La valoración clínica metódica es la herramienta más poderosa en el Cuerpo de Guardia o el Consultorio.</p>
+
+                        <h3>Evaluación del Grado de Deshidratación (Escala OMS)</h3>
+                        <p>Se evalúan 4 parámetros clave. Si el paciente presenta <strong>dos o más signos</strong> de una columna, se clasifica en esa categoría.</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                            <!-- Sin deshidratación -->
+                            <div class="bg-green-50 dark:bg-green-900/10 border-t-4 border-green-500 p-5 rounded-lg">
+                                <h4 class="text-green-800 dark:text-green-400 font-bold mt-0 mb-4 text-center">Plan A: Sin Deshidratación</h4>
+                                <ul class="text-sm space-y-2 m-0 p-0 text-slate-700 dark:text-slate-300">
+                                    <li><strong>Estado General:</strong> Alerta, bien, reactivo.</li>
+                                    <li><strong>Ojos:</strong> Normales. Llora con lágrimas.</li>
+                                    <li><strong>Boca/Lengua:</strong> Húmedas.</li>
+                                    <li><strong>Sed:</strong> Bebe normalmente, sin sed manifiesta.</li>
+                                    <li><strong>Pliegue cutáneo:</strong> Deshace inmediatamente.</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Algún grado de deshidratación -->
+                            <div class="bg-amber-50 dark:bg-amber-900/10 border-t-4 border-amber-500 p-5 rounded-lg">
+                                <h4 class="text-amber-800 dark:text-amber-400 font-bold mt-0 mb-4 text-center">Plan B: Algún Grado de Deshidr.</h4>
+                                <ul class="text-sm space-y-2 m-0 p-0 text-slate-700 dark:text-slate-300">
+                                    <li><strong>Estado General:</strong> Inquieto, irritable.</li>
+                                    <li><strong>Ojos:</strong> Hundidos. Sin lágrimas.</li>
+                                    <li><strong>Boca/Lengua:</strong> Secas.</li>
+                                    <li><strong>Sed:</strong> Sediento, bebe ávidamente.</li>
+                                    <li><strong>Pliegue cutáneo:</strong> Deshace lentamente (< 2 segundos).</li>
+                                </ul>
+                            </div>
+
+                            <!-- Deshidratación grave -->
+                            <div class="bg-red-50 dark:bg-red-900/10 border-t-4 border-red-500 p-5 rounded-lg">
+                                <h4 class="text-red-800 dark:text-red-400 font-bold mt-0 mb-4 text-center">Plan C: Deshidratación Grave</h4>
+                                <ul class="text-sm space-y-2 m-0 p-0 text-slate-700 dark:text-slate-300">
+                                    <li><strong>Estado General:</strong> Letárgico, comatoso, flácido.</li>
+                                    <li><strong>Ojos:</strong> Muy hundidos y secos.</li>
+                                    <li><strong>Boca/Lengua:</strong> Muy secas.</li>
+                                    <li><strong>Sed:</strong> Bebe mal o no es capaz de beber.</li>
+                                    <li><strong>Pliegue cutáneo:</strong> Deshace muy lentamente (> 2 seg).</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <p class="mt-6 text-sm text-slate-500 dark:text-slate-400 italic">Nota complementaria: Es crucial evaluar también la frecuencia cardíaca (taquicardia precoz en hipovolemia), el llenado capilar (prolongado > 3s en shock) y la tensión arterial (signo tardío de descompensación).</p>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN: TRATAMIENTO (PROTOCOLOS) -->
+                <section id="tratamiento" class="content-section prose dark:prose-invert max-w-none">
+                    <div class="bg-white dark:bg-darkcard p-8 lg:p-10 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/60">
+                        <h2 class="text-3xl font-heading font-bold text-slate-800 dark:text-white flex items-center gap-3 mb-6">
+                            <span class="bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 p-2 rounded-xl"><i class="fas fa-kit-medical"></i></span>
+                            Protocolos de Manejo y Terapéutica
+                        </h2>
+
+                        <div class="bg-brand-50 dark:bg-brand-900/20 border-l-4 border-brand-500 p-5 rounded-r-xl mb-8 shadow-inner">
+                            <h4 class="text-brand-800 dark:text-brand-300 font-bold m-0 flex items-center gap-2">
+                                <i class="fas fa-bullhorn text-brand-600 dark:text-brand-400"></i> Premisa de la Terapia de Rehidratación Oral (TRO)
+                            </h4>
+                            <p class="text-brand-900 dark:text-brand-100 mt-2 mb-0 text-sm">
+                                El descubrimiento del mecanismo de cotransporte Sodio-Glucosa en el enterocito, que permanece intacto durante el cólera y otras infecciones secretoras, permitió el desarrollo de las <strong>Sales de Rehidratación Oral (SRO)</strong>. Las guías actuales recomiendan SRO de <strong>baja osmolaridad (245 mOsm/l)</strong>.
+                            </p>
+                        </div>
+
+                        <h3>Plan A: Manejo en el Hogar (Prevención de la Deshidratación)</h3>
+                        <p>Se aplica a niños con EDA sin signos de deshidratación. Se basa en las Reglas de Oro:</p>
+                        <ul>
+                            <li><strong>Dar más líquidos de lo habitual:</strong> SRO después de cada deposición líquida, agua segura, caldos caseros, jugos naturales no azucarados (evitar refrescos o bebidas deportivas por su alta osmolaridad que agrava la diarrea).
+                                <ul class="text-sm mt-1">
+                                    <li>< 2 años: 50 a 100 ml (¼ a ½ taza) por cada evacuación.</li>
+                                    <li>2 a 10 años: 100 a 200 ml (½ a 1 taza) por cada evacuación.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Continuar la alimentación:</strong> NO suspender la lactancia materna por ningún motivo. Ofrecer alimentos blandos, cocidos, ricos en potasio (plátano, viandas) y frecuentes (6 comidas pequeñas al día).</li>
+                            <li><strong>Identificar signos de alarma para retornar urgente:</strong> Sed intensa, empeoramiento general, no come ni bebe, sangre en las heces, fiebre alta persistente, vómitos repetidos, disminución de la orina.</li>
+                        </ul>
+
+                        <h3>Plan B: Terapia de Rehidratación Oral en Consulta</h3>
+                        <p>Pacientes con algún grado de deshidratación. El objetivo es corregir el déficit en 4 horas bajo supervisión médica (en el cuerpo de guardia o área de rehidratación oral).</p>
+                        <ul>
+                            <li><strong>Dosis:</strong> 50 a 100 ml/kg de peso administrados a lo largo de 4 horas usando SRO.</li>
+                            <li><strong>Técnica:</strong> Ofrecer a cucharaditas o con jeringuilla de forma lenta (un sorbo cada 1-2 minutos) para evitar desencadenar el reflejo del vómito. Si vomita, esperar 10 minutos y reiniciar más lento.</li>
+                            <li><strong>Reevaluación:</strong> Estricta a las 4 horas (o antes si empeora). Si desaparecen los signos, pasar al Plan A. Si persisten, repetir Plan B o considerar vía intravenosa si fracasa la vía oral (íleo, vómitos incoercibles > 4 por hora).</li>
+                        </ul>
+
+                        <h3>Plan C: Rehidratación Intravenosa Urgente</h3>
+                        <p>Paciente con deshidratación grave o estado de choque. Requiere ingreso hospitalario inmediato. Se utiliza <strong>Solución Salina Fisiológica (0.9%)</strong> o preferiblemente <strong>Ringer Lactato</strong>.</p>
+                        <ul>
+                            <li><strong>Meta OMS:</strong> Administrar 100 ml/kg divididos según la edad:
+                                <ul class="mt-2">
+                                    <li><strong>Lactantes menores de 12 meses:</strong> 30 ml/kg en 1 hora, seguido de 70 ml/kg en 5 horas (Total: 6 horas).</li>
+                                    <li><strong>Niños de 1 año a 5 años:</strong> 30 ml/kg en 30 minutos, seguido de 70 ml/kg en 2.5 horas (Total: 3 horas).</li>
+                                </ul>
+                            </li>
+                            <li>Evaluar continuamente la respuesta hemodinámica. Si el pulso periférico sigue débil o ausente tras la primera carga, repetir el bolo de 30 ml/kg. Evaluar para reiniciar SRO en cuanto el paciente esté consciente y pueda beber sin riesgo de broncoaspiración (usualmente a las 2-3 horas).</li>
+                        </ul>
+
+                        <div class="mt-8 border-t border-slate-200 dark:border-slate-700 pt-6">
+                            <h3>Terapia Farmacológica Adyuvante</h3>
+                            <p><strong>Suplementación con Zinc:</strong> Reduce la duración y gravedad del episodio diarreico, y disminuye el riesgo de recurrencia en los siguientes 2-3 meses. Se administra por 10-14 días.</p>
+                            <ul>
+                                <li>Menores de 6 meses: 10 mg/día.</li>
+                                <li>Mayores de 6 meses: 20 mg/día.</li>
+                            </ul>
+                            
+                            <p><strong>Uso Racional de Antimicrobianos:</strong> <em>"La diarrea acuosa aguda no requiere antibióticos"</em>. Su uso indiscriminado empeora la disbiosis, prolonga el estado de portador (ej. Salmonella) y aumenta las resistencias. <br><strong>Indicaciones precisas:</strong></p>
+                            <ul>
+                                <li><strong>Disentería (sospecha clínica de Shigella):</strong> Azitromicina (vía oral, primera línea en muchas regiones por resistencia), Cefixima o Ceftriaxona (EV). Ácido Nalidíxico o Ciprofloxacino según susceptibilidad local.</li>
+                                <li><strong>Cólera:</strong> Tetraciclinas o Macrólidos para acortar la excreción.</li>
+                                <li><strong>Giardiasis o Amebiasis:</strong> Metronidazol o Tinidazol.</li>
+                                <li>Enfermedad grave con sospecha de sepsis extraintestinal, lactantes muy pequeños (< 1 mes) o inmunodeprimidos.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CALCULADORA DE HIDRATACIÓN (HERRAMIENTA) -->
+                <section id="calculadora" class="content-section max-w-none">
+                    <div class="bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-800 dark:to-slate-900 p-8 lg:p-10 rounded-3xl shadow-xl border border-slate-700 text-white relative overflow-hidden">
+                        
+                        <!-- Elementos decorativos -->
+                        <div class="absolute top-0 right-0 p-8 opacity-20">
+                            <i class="fas fa-calculator text-8xl text-brand-500"></i>
+                        </div>
+
+                        <div class="relative z-10">
+                            <h2 class="text-3xl font-heading font-bold mb-2 flex items-center gap-3">
+                                Herramienta: Calculadora de Hidratación
+                            </h2>
+                            <p class="text-slate-300 mb-8 max-w-2xl">Calcula rápidamente los volúmenes para el <strong>Plan B</strong> (SRO) y el <strong>Plan C</strong> (Endovenoso) de la OMS basados en el peso y la edad del paciente pediátrico.</p>
+
+                            <!-- Formulario -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-800/80 p-6 rounded-2xl border border-slate-700 backdrop-blur-sm">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-300 mb-2" for="peso">Peso del Paciente (Kg)</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-weight-scale text-slate-400"></i>
+                                        </div>
+                                        <input type="number" id="pesoInput" step="0.1" min="1" max="50" placeholder="Ej. 12.5" class="bg-slate-900 border border-slate-600 text-white text-lg rounded-xl focus:ring-brand-500 focus:border-brand-500 block w-full pl-10 p-3 outline-none transition-all">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-300 mb-2" for="edad">Grupo de Edad</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-child-reaching text-slate-400"></i>
+                                        </div>
+                                        <select id="edadSelect" class="bg-slate-900 border border-slate-600 text-white text-lg rounded-xl focus:ring-brand-500 focus:border-brand-500 block w-full pl-10 p-3 outline-none appearance-none transition-all cursor-pointer">
+                                            <option value="menor1">Lactante (Menor de 12 meses)</option>
+                                            <option value="mayor1">Niño (1 año a 5 años)</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-chevron-down text-slate-400 text-sm"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="md:col-span-2 mt-2">
+                                    <button id="btnCalcular" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-opacity-50 flex justify-center items-center gap-2 text-lg">
+                                        <i class="fas fa-flask"></i> Calcular Volúmenes
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Resultados (Ocultos por defecto) -->
+                            <div id="resultadosCalc" class="mt-8 hidden animate-fade-in-up">
+                                <h3 class="text-xl font-heading font-bold mb-4 border-b border-slate-700 pb-2">Protocolos Recomendados</h3>
+                                
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <!-- Resultado Plan B -->
+                                    <div class="bg-amber-900/40 border border-amber-700/50 rounded-2xl p-5 relative">
+                                        <div class="absolute top-0 right-0 bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-2xl">ORAL (SRO)</div>
+                                        <h4 class="text-amber-400 font-bold flex items-center gap-2 mb-3 text-lg"><i class="fas fa-glass-water"></i> Plan B</h4>
+                                        <div class="space-y-3">
+                                            <div class="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg">
+                                                <span class="text-slate-300 text-sm">Volumen Total SRO (4 horas):</span>
+                                                <span class="font-bold text-amber-400 text-lg" id="resPlanBTotal">-- ml</span>
+                                            </div>
+                                            <div class="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg">
+                                                <span class="text-slate-300 text-sm">Aproximado por hora:</span>
+                                                <span class="font-bold text-slate-100" id="resPlanBHora">-- ml / hora</span>
+                                            </div>
+                                            <p class="text-xs text-slate-400 mt-2">* Calculado a razón de 75 ml/kg (rango 50-100 ml/kg). Dar lentamente a cucharadas.</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Resultado Plan C -->
+                                    <div class="bg-red-900/40 border border-red-700/50 rounded-2xl p-5 relative">
+                                        <div class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-2xl">INTRAVENOSO (100 ml/kg)</div>
+                                        <h4 class="text-red-400 font-bold flex items-center gap-2 mb-3 text-lg"><i class="fas fa-syringe"></i> Plan C (Choque)</h4>
+                                        <div class="space-y-3">
+                                            <div class="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg border-l-4 border-red-500">
+                                                <div>
+                                                    <span class="block text-slate-300 text-xs font-semibold uppercase">1ra Carga Rápida (30 ml/kg)</span>
+                                                    <span class="block text-slate-400 text-xs" id="resPlanCTiempo1">--</span>
+                                                </div>
+                                                <span class="font-bold text-red-400 text-lg" id="resPlanCCarga1">-- ml</span>
+                                            </div>
+                                            <div class="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg border-l-4 border-orange-500">
+                                                <div>
+                                                    <span class="block text-slate-300 text-xs font-semibold uppercase">2da Carga Mantenimiento (70 ml/kg)</span>
+                                                    <span class="block text-slate-400 text-xs" id="resPlanCTiempo2">--</span>
+                                                </div>
+                                                <span class="font-bold text-orange-400 text-lg" id="resPlanCCarga2">-- ml</span>
+                                            </div>
+                                            <p class="text-xs text-slate-400 mt-2">* Usar Ringer Lactato o Solución Salina 0.9%. Evaluar pulso tras 1ra carga.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <br><br>
+
+                <!-- SECCIÓN: AUTOEVALUACIÓN -->
+                <section id="autoevaluacion" class="content-section max-w-none">
+                    <div class="bg-white dark:bg-darkcard p-8 lg:p-10 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/60">
+                        <h2 class="text-3xl font-heading font-bold text-slate-800 dark:text-white flex items-center gap-3 mb-2">
+                            <span class="bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 p-2 rounded-xl"><i class="fas fa-brain"></i></span>
+                            Autoevaluación para Enfermería
+                        </h2>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm mb-8">Pon a prueba tu conocimiento sobre EDA pediátrica. Responde cada pregunta antes de revelar la respuesta correcta.</p>
+
+                        <div id="quiz-container" class="space-y-6">
+                            <!-- Las preguntas se inyectan por JS -->
+                        </div>
+
+                        <div class="mt-8 flex flex-col sm:flex-row items-center gap-4">
+                            <button id="btnVerResultados" class="hidden w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-xl shadow transition-all flex items-center justify-center gap-2">
+                                <i class="fas fa-flag-checkered"></i> Ver Mi Puntuación Final
+                            </button>
+                            <button id="btnReiniciar" class="hidden w-full sm:w-auto bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold py-3 px-8 rounded-xl shadow transition-all flex items-center justify-center gap-2">
+                                <i class="fas fa-rotate-right"></i> Reiniciar Quiz
+                            </button>
+                        </div>
+
+                        <div id="resultadoFinal" class="hidden mt-8 p-6 rounded-2xl border-2 text-center">
+                            <p class="text-4xl font-extrabold font-heading mb-2" id="puntuacionTexto"></p>
+                            <p class="text-lg font-semibold" id="mensajeResultado"></p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN: REFERENCIAS BIBLIOGRÁFICAS -->
+                <section id="referencias" class="content-section max-w-none">
+                    <div class="bg-white dark:bg-darkcard p-8 lg:p-10 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/60">
+                        <h2 class="text-3xl font-heading font-bold text-slate-800 dark:text-white flex items-center gap-3 mb-2">
+                            <span class="bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 p-2 rounded-xl"><i class="fas fa-book-open"></i></span>
+                            Referencias Bibliográficas
+                        </h2>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm mb-8">Fuentes científicas utilizadas como base de esta guía clínica. Se priorizan textos cubanos y latinoamericanos de acceso abierto, complementados con guías internacionales de la OMS/OPS y publicaciones de alto impacto.</p>
+
+                        <!-- Textos Cubanos -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-heading font-bold text-brand-700 dark:text-brand-400 flex items-center gap-2 mb-4 pb-2 border-b border-brand-100 dark:border-brand-900/40">
+                                <i class="fas fa-flag text-sm"></i> Bibliografía Cubana
+                            </h3>
+                            <ol class="space-y-3 text-sm text-slate-600 dark:text-slate-300 list-decimal list-inside marker:font-bold marker:text-brand-500">
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Riverón Corteguera RL, Mena Miranda VR, González Fernández M.</span> Morbilidad y mortalidad por enfermedades infecciosas intestinales en Cuba 1980–1999. <em>Rev Cubana Pediatr.</em> 2000;72(2):72–80. Disponible en: <a href="http://scielo.sld.cu" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">scielo.sld.cu</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Riverón Corteguera RL.</span> Editorial sobre Diarreas. <em>Rev Cubana Pediatr.</em> 2000;72(2):69–71.</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Povea Alfonso E, Hevia Bernal D.</span> La enfermedad diarreica aguda. <em>Rev Cubana Pediatr</em> [Internet]. 2019 [citado Nov 2024];91(4). Disponible en: <a href="https://revpediatria.sld.cu/index.php/ped/article/view/928" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">revpediatria.sld.cu</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Mena Miranda VR, Ávila Ochoa I, Cabrera Bueno AC.</span> Caracterización de las complicaciones de los pacientes diagnosticados con cólera en el Hospital Pediátrico de Centro Habana, 2013–2017. <em>Rev Cubana Pediatr</em> [Internet]. 2020 [citado Nov 2024];92(1):e919. Disponible en: <a href="http://scielo.sld.cu/scielo.php?script=sci_arttext&pid=S0034-75312020000100005" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">scielo.sld.cu</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Céspedes González AM, Montero Verdecia DE, Meriño Pompa Y, Rondón Peña MO, Naranjo Vázquez SY.</span> Enfermedad diarreica aguda con complicaciones graves en una Unidad de Cuidados Intensivos Pediátricos. <em>Rev Inf Científica.</em> 2025. Disponible en: <a href="https://revinfcientifica.sld.cu" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">revinfcientifica.sld.cu</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">González Benítez N, et al.</span> Factor bayesiano para estimar la presencia de diarreas en niños por rotavirus según variabilidad climática en Cuba. <em>Portal Amelica.</em> 2022. Disponible en: <a href="https://portal.amelica.org" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">portal.amelica.org</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Bonet-Gorbea M.</span> Cólera en Haití: Lecciones aprendidas por la Brigada Médica Cubana. <em>Rev Cubana Salud Pública.</em> 2014;40(3):418–20. Disponible en: <a href="http://scielo.sld.cu" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">scielo.sld.cu</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Riverón Corteguera RL.</span> Enfermedades diarreicas agudas por retrovirus. Estudio de 66 pacientes. <em>Rev Cubana Pediatr.</em> 1989;61(2):162–7.</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">León M, Castillo A del.</span> Rehidratación oral: Aplicación en pacientes con distintos grados de deshidratación. <em>Rev Cubana Pediatr.</em> 1986;58(1):58–65.</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Pérez-Ortiz L, Madrigal-Lomba R.</span> El cólera en Cuba: Apuntes históricos. <em>Rev Med Electrón.</em> 2010;32(Suppl 7). Disponible en: <a href="http://scielo.sld.cu" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">scielo.sld.cu</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Guía para la Práctica Clínica de las Enfermedades Diarreicas Agudas.</span> Ciudad de La Habana: MINSAP; 2003. Disponible en: <a href="http://scielo.sld.cu/scielo.php?script=sci_arttext&pid=S0864-21252003000400009" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">scielo.sld.cu</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">MINSAP.</span> Anuario Estadístico de Salud de Cuba. Ciudad de La Habana: Dirección Nacional de Estadísticas; ediciones sucesivas 2001–2023. Disponible en: <a href="https://salud.msp.gob.cu" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">salud.msp.gob.cu</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Riverón Corteguera RL, Gutiérrez Muñiz JA.</span> Las enfermedades diarreicas agudas en América Latina en el decenio 1970–1979: la situación de Cuba. <em>Rev Cubana Pediatr.</em> 1981;53(5):351–62.</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Toledo Curbelo GJ.</span> Salud Pública 1: Generalidades de salud pública y estado de salud de la población. La Habana: Editorial Ciencias Médicas; 1999.</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Behrman RE, Kliegman RM, Awin AM.</span> Tratado de Pediatría. 15.ª ed., Vol. 1. La Habana: Editorial Ciencias Médicas; 1998:903–907, 1300–03.</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Riverón Corteguera RL.</span> Estrategias para reducir la mortalidad infantil, Cuba 1959–1999. <em>Rev Cubana Pediatr.</em> 2000 jul.-set.;72(3):147–164.</li>
+                            </ol>
+                        </div>
+
+                        <!-- OMS / OPS / Guías Internacionales -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-heading font-bold text-blue-700 dark:text-blue-400 flex items-center gap-2 mb-4 pb-2 border-b border-blue-100 dark:border-blue-900/40">
+                                <i class="fas fa-globe text-sm"></i> OMS / OPS y Guías Internacionales
+                            </h3>
+                            <ol start="17" class="space-y-3 text-sm text-slate-600 dark:text-slate-300 list-decimal list-inside marker:font-bold marker:text-blue-500">
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Organización Mundial de la Salud (OMS).</span> Diarrea: por qué los niños siguen muriendo y qué puede hacerse. Ginebra: OMS/UNICEF; 2009. Disponible en: <a href="https://www.who.int" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">who.int</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">OPS/OMS/UNICEF.</span> Enfermedades prevalentes graves de la infancia. Guía básica para el nivel de referencia hospitalaria. Serie HCT/AIEPI-23E. Ginebra: OMS; 2016 (2.ª ed. corregida).</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">OPS.</span> Cuadro de Procedimientos AIEPI. Bogotá D.C., Colombia: OPS; 2016 (Serie 3). Disponible en: <a href="https://www.paho.org" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">paho.org</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">OMS/UNICEF.</span> Suplementación con zinc para el tratamiento de la diarrea en niños. Ginebra: OMS; 2006. Disponible en: <a href="https://www.who.int" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">who.int</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">OPS.</span> Rotavirus. Ficha informativa y de vigilancia. Washington: OPS; 2023. Disponible en: <a href="https://www.paho.org/es/temas/rotavirus" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">paho.org</a></li>
+                            </ol>
+                        </div>
+
+                        <!-- Latinoamérica -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-heading font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-2 mb-4 pb-2 border-b border-emerald-100 dark:border-emerald-900/40">
+                                <i class="fas fa-map text-sm"></i> Latinoamérica y Caribe
+                            </h3>
+                            <ol start="22" class="space-y-3 text-sm text-slate-600 dark:text-slate-300 list-decimal list-inside marker:font-bold marker:text-emerald-500">
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Florez ID, Contreras JO, Sierra JM, et al.</span> Guía de Práctica Clínica de la enfermedad diarreica aguda en niños menores de 5 años: Diagnóstico y tratamiento. <em>Pediatría (Colombia).</em> 2015;48(02):29–46. Disponible en: <a href="https://www.elsevier.es/es-revista-pediatria-213-articulo-guia-practica-clinica-enfermedad-diarreica-S0120491215000075" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">elsevier.es</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">De Materán M, Tomat M, Salvatierra A, León K, Marcano J.</span> Terapia de rehidratación oral en pacientes deshidratados por diarrea aguda infantil. <em>Arch Venez Puericultura Pediatr.</em> 2014;77(1):48–57.</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Carranza C, Gómez J, Wilches L.</span> Rehidratación en el paciente pediátrico. <em>Med (Bogotá).</em> 2016;24(2). Disponible en: <a href="http://www.scielo.org.co/scielo.php?script=sci_arttext&pid=S0121-52562016000200004" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">scielo.org.co</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Yard Foster Y, Correoso Guevara JD, Núñez Ortega JM.</span> Factores de riesgo de enfermedad diarreica aguda en menores de 5 años. <em>Rev Méd Cient.</em> 2021;34(1):1–8. DOI: <a href="https://doi.org/10.37416/rmc.v34i1.573" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">10.37416/rmc.v34i1.573</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Estrada Tamayo YR, Peña Carbonel D, Martín Llaudi IM, et al.</span> Factores de riesgo de diarrea por rotavirus en niños de hasta cinco años de edad. <em>Rev Electron Zoilo.</em> 2021;46(3). Disponible en: <a href="http://revzoilomarinello.sld.cu" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">revzoilomarinello.sld.cu</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Nazate Chuga ZR, Ramos Sánchez RE, Mejía Álvarez ET, Villarreal Ger MC.</span> Principales agentes etiológicos de las enfermedades diarreicas agudas infantiles en Chimborazo, Ecuador. <em>Bol Malariol Salud Ambient.</em> 2022;62(4):714–720.</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Beltrán-Castro M, Muñoz-Pedraza DK.</span> Enfermedad Diarreica Aguda (EDA): un abordaje práctico. <em>Rev Neuronum.</em> 2022;8(2):97–114. Disponible en: <a href="https://eduneuro.com/revista/index.php/revistaneuronum/article/view/430" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">eduneuro.com</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Álava Moreira PG, Saltos Meza YA, Ponce Lino LL, Zambrano Mendoza AI.</span> Terapia de rehidratación en niños, ¿oral o intravenosa? <em>RECIMUNDO.</em> 2023;7(1):706–715. DOI: <a href="https://doi.org/10.26820/recimundo/7.(1).enero.2023.706-715" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">10.26820/recimundo</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Vázquez-Rojas A, Miliar-De Jesús R.</span> Factores de riesgo de las enfermedades diarreicas agudas en menores de cinco años. <em>Rev Enferm Infecc Pediatr.</em> 2020;33(133):1713–7.</li>
+                            </ol>
+                        </div>
+
+                        <!-- Publicaciones de alto impacto -->
+                        <div>
+                            <h3 class="text-lg font-heading font-bold text-amber-700 dark:text-amber-400 flex items-center gap-2 mb-4 pb-2 border-b border-amber-100 dark:border-amber-900/40">
+                                <i class="fas fa-star text-sm"></i> Literatura Internacional de Alto Impacto
+                            </h3>
+                            <ol start="31" class="space-y-3 text-sm text-slate-600 dark:text-slate-300 list-decimal list-inside marker:font-bold marker:text-amber-500">
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Nelson WE, Vaughan VC, Mckay RS.</span> Nelson: Tratado de Pediatría. 21.ª ed. Barcelona: Elsevier España; 2020.</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Guerrant RL, Van Gilder T, Steiner TS, et al.</span> Practice guidelines for the management of infectious diarrhea. <em>Clin Infect Dis.</em> 2001;32(3):331–51.</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">García MA, López C, González de Dios J.</span> Deshidratación aguda. <em>Protoc Diagn Ter Pediatría.</em> 2020;(1):215–231. Disponible en: <a href="https://www.aeped.es" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">aeped.es</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Molina Cabañero JC.</span> Deshidratación: Rehidratación oral y nuevas pautas de rehidratación parenteral. <em>Pediatr Integral.</em> 2019;XXIII(2):98–105. Disponible en: <a href="https://www.pediatriaintegral.es" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">pediatriaintegral.es</a></li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Mora-Capín A, López-López R, Guibert-Zafra B, et al.</span> Documento de recomendaciones sobre la rehidratación intravenosa rápida en gastroenteritis aguda. <em>An Esp Pediatr.</em> 2022;96(6):523–530.</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Mackenzie A, Barnes G.</span> Randomised controlled trial comparing oral and intravenous rehydration therapy in children with diarrhoea. <em>BMJ.</em> 1991;303:393–6.</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Harris JB, LaRocque RC, Qadri F, Ryan ET, Calderwood SB.</span> Cholera. <em>Lancet.</em> 2012;379:2466–76.</li>
+                                <li class="leading-relaxed pl-2"><span class="font-semibold">Sabatine MS.</span> Gastroenterología. Medicina de Bolsillo. 6.ª ed. Barcelona: Wolters Kluwer; 2019.</li>
+                            </ol>
+                        </div>
+
+                        <div class="mt-8 bg-brand-50 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-800 rounded-2xl p-4 flex gap-3 items-start">
+                            <i class="fas fa-circle-info text-brand-500 mt-0.5 text-lg flex-shrink-0"></i>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Esta guía se actualiza periódicamente. Para acceder a las versiones más recientes de los artículos cubanos, consulta <strong>SciELO Cuba</strong> (<a href="http://scielo.sld.cu" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">scielo.sld.cu</a>), <strong>Infomed</strong> (<a href="https://www.sld.cu" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">sld.cu</a>) y el repositorio de la <strong>Revista Cubana de Pediatría</strong> (<a href="https://revpediatria.sld.cu" target="_blank" class="text-brand-600 dark:text-brand-400 hover:underline">revpediatria.sld.cu</a>).</p>
+                        </div>
+                    </div>
+                </section>
+
+                <br><br>
+            </div>
+            
+            <!-- Footer -->
+            <footer class="text-center text-slate-500 dark:text-slate-500 mt-10 pb-8 text-sm font-medium">
+                <p>EDA-Pro &copy; 2026. Guía de actuación clínica para estudiantes y profesionales de APS.</p>
+                <p class="text-xs mt-1">Material con fines educativos basado en protocolos de la OMS, OPS y MINSAP. Toda decisión médica recae en el profesional a cargo.</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Scripts de Interacción -->
+    <script>
+        /* === LÓGICA DEL MENÚ MÓVIL === */
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        function toggleMenu() {
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 1024) toggleMenu();
+                
+                // Resaltar link activo
+                navLinks.forEach(l => {
+                    l.classList.remove('bg-brand-50', 'dark:bg-slate-700/50', 'text-brand-600', 'dark:text-brand-400', 'font-semibold');
+                    l.classList.add('text-slate-600', 'dark:text-slate-300');
+                });
+                link.classList.remove('text-slate-600', 'dark:text-slate-300');
+                link.classList.add('bg-brand-50', 'dark:bg-slate-700/50', 'text-brand-600', 'dark:text-brand-400', 'font-semibold');
+            });
+        });
+
+        /* === LÓGICA DEL MODO OSCURO === */
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+
+        // Inicialización basada en preferencias
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                htmlElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+        });
+
+        /* === LÓGICA DE LA CALCULADORA MÉDICA === */
+        const btnCalcular = document.getElementById('btnCalcular');
+        const inputPeso = document.getElementById('pesoInput');
+        const selectEdad = document.getElementById('edadSelect');
+        const divResultados = document.getElementById('resultadosCalc');
+
+        btnCalcular.addEventListener('click', () => {
+            const peso = parseFloat(inputPeso.value);
+            const edad = selectEdad.value;
+
+            if (isNaN(peso) || peso <= 0 || peso > 80) {
+                alert('Por favor, ingrese un peso válido del paciente pediátrico (Kg).');
+                return;
+            }
+
+            // Cálculos Plan B (Promedio 75 ml/kg en 4h)
+            const planBTotal = peso * 75;
+            const planBHora = planBTotal / 4;
+
+            document.getElementById('resPlanBTotal').textContent = `${Math.round(planBTotal)} ml`;
+            document.getElementById('resPlanBHora').textContent = `~ ${Math.round(planBHora)} ml / hora`;
+
+            // Cálculos Plan C (100 ml/kg total)
+            const carga1 = peso * 30;
+            const carga2 = peso * 70;
+
+            document.getElementById('resPlanCCarga1').textContent = `${Math.round(carga1)} ml`;
+            document.getElementById('resPlanCCarga2').textContent = `${Math.round(carga2)} ml`;
+
+            // Textos de tiempo según edad
+            const tiempo1El = document.getElementById('resPlanCTiempo1');
+            const tiempo2El = document.getElementById('resPlanCTiempo2');
+
+            if (edad === 'menor1') {
+                // < 12 meses: 30ml/kg en 1h, 70ml/kg en 5h
+                tiempo1El.innerHTML = '<i class="far fa-clock"></i> Administrar en <strong>1 Hora</strong>';
+                tiempo2El.innerHTML = '<i class="far fa-clock"></i> Administrar en <strong>5 Horas</strong>';
+            } else {
+                // >= 12 meses: 30ml/kg en 30min, 70ml/kg en 2.5h
+                tiempo1El.innerHTML = '<i class="far fa-clock"></i> Administrar en <strong>30 Minutos</strong>';
+                tiempo2El.innerHTML = '<i class="far fa-clock"></i> Administrar en <strong>2.5 Horas</strong>';
+            }
+
+            // Mostrar resultados con animación
+            divResultados.classList.remove('hidden');
+            
+            // Auto scroll suave a los resultados
+            setTimeout(() => {
+                divResultados.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        });
+    </script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('SW registrado'))
+        .catch(err => console.log('Error SW', err));
+    });
+  }
+</script>
+
+    <!-- QUIZ LÓGICA -->
+    <script>
+    const preguntas = [
+        {
+            pregunta: "Según la OMS, la Enfermedad Diarreica Aguda se define como:",
+            opciones: [
+                "Más de 5 deposiciones líquidas en 24 horas durante al menos 7 días.",
+                "Tres o más deposiciones con disminución de consistencia en 24 horas, con duración menor de 14 días.",
+                "Cualquier deposición blanda en lactantes alimentados con fórmula.",
+                "Dos deposiciones líquidas al día sin importar la duración."
+            ],
+            correcta: 1,
+            explicacion: "La OMS define la EDA como ≥3 deposiciones de consistencia disminuida en 24 horas con duración <14 días. En lactantes con lactancia materna, el parámetro clave es el cambio súbito del patrón habitual."
+        },
+        {
+            pregunta: "¿Cuál es la vía de transmisión primordial de la EDA?",
+            opciones: [
+                "Aérea (gotas de Flügge).",
+                "Vectorial (mosquitos).",
+                "Fecal-oral (agua/alimentos contaminados o contacto directo).",
+                "Parenteral (sangre contaminada)."
+            ],
+            correcta: 2,
+            explicacion: "La vía fecal-oral es la principal ruta de transmisión. Puede concretarse por ingesta de agua o alimentos contaminados, o por contacto directo persona a persona a través de manos sucias."
+        },
+        {
+            pregunta: "En el contexto del Plan B (OMS), ¿a qué razón se calcula el volumen de Sales de Rehidratación Oral (SRO)?",
+            opciones: [
+                "50 ml/kg en 2 horas.",
+                "100 ml/kg en 4 horas.",
+                "75 ml/kg (rango 50-100 ml/kg) en 4 horas.",
+                "20 ml/kg en 30 minutos."
+            ],
+            correcta: 2,
+            explicacion: "El Plan B de la OMS indica administrar SRO a razón de 75 ml/kg (con rango de 50-100 ml/kg) durante un período de 4 horas, de forma lenta y fraccionada, preferiblemente a cucharadas."
+        },
+        {
+            pregunta: "Un lactante de 8 meses con deshidratación severa requiere Plan C. Según los protocolos de la OMS para menores de 12 meses, la 1ª carga (30 ml/kg) debe administrarse en:",
+            opciones: [
+                "5 minutos.",
+                "30 minutos.",
+                "1 hora.",
+                "2 horas."
+            ],
+            correcta: 2,
+            explicacion: "En lactantes menores de 12 meses, la 1ª carga de 30 ml/kg se pasa en 1 hora. En niños mayores de 12 meses, ese mismo volumen se pasa en solo 30 minutos, dada su mayor reserva cardiovascular."
+        },
+        {
+            pregunta: "¿Cuál de los siguientes agentes etiológicos es la causa más frecuente de diarrea grave con deshidratación en niños menores de 2 años a nivel mundial?",
+            opciones: [
+                "Shigella spp.",
+                "Rotavirus.",
+                "Giardia lamblia.",
+                "Vibrio cholerae."
+            ],
+            correcta: 1,
+            explicacion: "El Rotavirus es el principal agente viral causante de EDA grave en menores de 2-3 años, responsable de hasta el 70-80% de los casos de diarrea viral grave. Genera un cuadro de diarrea osmótica y secretora combinada."
+        },
+        {
+            pregunta: "La deshidratación que se origina cuando el agente produce enterotoxinas que activan la adenilato ciclasa, incrementando el AMPc y bloqueando la absorción de sodio, corresponde al mecanismo:",
+            opciones: [
+                "Osmótico.",
+                "Invasivo.",
+                "Secretor.",
+                "Inflamatorio."
+            ],
+            correcta: 2,
+            explicacion: "La diarrea secretora se produce cuando toxinas bacterianas (ej: V. cholerae, E. coli enterotoxigénica) elevan el AMPc intracelular, estimulando la secreción activa de cloro y sodio hacia la luz intestinal sin daño estructural de la mucosa."
+        },
+        {
+            pregunta: "¿Cuál de los siguientes signos indica deshidratación SEVERA según la clasificación AIEPI/OMS?",
+            opciones: [
+                "Lactante irritable con ojos ligeramente hundidos.",
+                "Niño con pliegue cutáneo que desaparece lentamente.",
+                "Llanto sin lágrimas y mucosas levemente secas.",
+                "Letargo o inconsciencia, ojos muy hundidos, pliegue cutáneo que desaparece muy lentamente (>2 seg) y no puede beber."
+            ],
+            correcta: 3,
+            explicacion: "La deshidratación severa se identifica por: letargo o inconsciencia, ojos muy hundidos, pliegue cutáneo que tarda más de 2 segundos en desaparecer, y la incapacidad del niño para beber. Requiere Plan C (rehidratación IV) de urgencia."
+        },
+        {
+            pregunta: "¿Cuál es el fundamento fisiológico de las Sales de Rehidratación Oral (SRO)?",
+            opciones: [
+                "La glucosa inhibe la secreción de cloro a nivel de las criptas.",
+                "El transporte acoplado sodio-glucosa en el enterocito permanece activo incluso durante la diarrea.",
+                "La fructosa estimula la absorción de agua por ósmosis.",
+                "Las SRO bloquean los receptores de la toxina colérica en la mucosa."
+            ],
+            correcta: 1,
+            explicacion: "El fundamento de la TRO es que el cotransportador SGLT-1 (sodio-glucosa) del enterocito permanece funcionalmente intacto durante la diarrea infecciosa. Al administrar glucosa, se arrastra sodio y agua hacia el interior celular, logrando rehidratación efectiva por vía oral."
+        },
+        {
+            pregunta: "Según las recomendaciones actuales de la OMS/UNICEF, ¿cuál es la dosis y duración del suplemento de zinc en niños con EDA mayores de 6 meses?",
+            opciones: [
+                "10 mg/día por 5 días.",
+                "20 mg/día por 10 a 14 días.",
+                "15 mg/día por 7 días.",
+                "30 mg/día por 3 días."
+            ],
+            correcta: 1,
+            explicacion: "La OMS/UNICEF recomienda zinc elemental 20 mg/día durante 10-14 días en niños >6 meses con EDA (10 mg/día en menores de 6 meses). El zinc reduce la duración y la gravedad del episodio diarreico y disminuye la incidencia de nuevos episodios en los meses siguientes."
+        },
+        {
+            pregunta: "En un niño con EDA, ¿cuál de las siguientes prácticas de enfermería es INCORRECTA?",
+            opciones: [
+                "Registrar el peso al ingreso para comparar con el peso post-rehidratación.",
+                "Suspender la lactancia materna durante las primeras 24 horas para 'dar descanso intestinal'.",
+                "Valorar y registrar el número, consistencia y volumen de las deposiciones.",
+                "Educar a la familia sobre los signos de alarma que ameritan consulta inmediata."
+            ],
+            correcta: 1,
+            explicacion: "Suspender la lactancia materna es INCORRECTO. Las guías actuales de la OMS establecen que la lactancia materna NO debe interrumpirse durante un episodio de EDA; por el contrario, debe mantenerse a libre demanda ya que aporta electrolitos, inmunoglobulinas y factores de crecimiento que protegen la mucosa intestinal."
+        }
+    ];
+
+    let respuestasUsuario = new Array(preguntas.length).fill(null);
+    let preguntasRespondidas = 0;
+
+    function renderizarQuiz() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+        preguntasRespondidas = 0;
+        respuestasUsuario = new Array(preguntas.length).fill(null);
+
+        preguntas.forEach((p, i) => {
+            const div = document.createElement('div');
+            div.className = 'bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 transition-all';
+            div.id = `pregunta-${i}`;
+
+            let opcionesHTML = p.opciones.map((op, j) => `
+                <button 
+                    onclick="seleccionarRespuesta(${i}, ${j})"
+                    id="opcion-${i}-${j}"
+                    class="opcion-btn w-full text-left px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700/50 text-slate-700 dark:text-slate-200 text-sm hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all font-medium flex items-center gap-3">
+                    <span class="flex-shrink-0 w-7 h-7 rounded-full border-2 border-slate-300 dark:border-slate-500 flex items-center justify-center text-xs font-bold opcion-letra">${String.fromCharCode(65 + j)}</span>
+                    <span>${op}</span>
+                </button>
+            `).join('');
+
+            div.innerHTML = `
+                <p class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-3">Pregunta ${i + 1} de ${preguntas.length}</p>
+                <p class="font-semibold text-slate-800 dark:text-slate-100 text-base mb-4 leading-relaxed">${p.pregunta}</p>
+                <div class="space-y-2" id="opciones-${i}">${opcionesHTML}</div>
+                <div id="feedback-${i}" class="hidden mt-4 p-4 rounded-xl text-sm leading-relaxed"></div>
+            `;
+            container.appendChild(div);
+        });
+
+        document.getElementById('btnVerResultados').classList.add('hidden');
+        document.getElementById('btnReiniciar').classList.add('hidden');
+        document.getElementById('resultadoFinal').classList.add('hidden');
+        document.getElementById('resultadoFinal').className = 'hidden mt-8 p-6 rounded-2xl border-2 text-center';
+    }
+
+    function seleccionarRespuesta(pregIdx, opIdx) {
+        if (respuestasUsuario[pregIdx] !== null) return; // Ya respondida
+
+        respuestasUsuario[pregIdx] = opIdx;
+        preguntasRespondidas++;
+
+        const p = preguntas[pregIdx];
+        const esCorrecta = opIdx === p.correcta;
+
+        // Deshabilitar todos los botones de esta pregunta
+        for (let j = 0; j < p.opciones.length; j++) {
+            const btn = document.getElementById(`opcion-${pregIdx}-${j}`);
+            btn.disabled = true;
+            btn.classList.remove('hover:border-purple-400', 'hover:bg-purple-50', 'dark:hover:bg-purple-900/20');
+
+            if (j === p.correcta) {
+                btn.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20', 'text-green-800', 'dark:text-green-300');
+                btn.querySelector('.opcion-letra').classList.add('border-green-500', 'bg-green-500', 'text-white');
+            } else if (j === opIdx && !esCorrecta) {
+                btn.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/20', 'text-red-800', 'dark:text-red-300');
+                btn.querySelector('.opcion-letra').classList.add('border-red-500', 'bg-red-500', 'text-white');
+            } else {
+                btn.classList.add('opacity-50');
+            }
+        }
+
+        // Mostrar feedback
+        const feedback = document.getElementById(`feedback-${pregIdx}`);
+        feedback.classList.remove('hidden');
+        if (esCorrecta) {
+            feedback.className = 'mt-4 p-4 rounded-xl text-sm leading-relaxed bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 text-green-800 dark:text-green-300';
+            feedback.innerHTML = `<i class="fas fa-circle-check mr-2"></i><strong>¡Correcto!</strong> ${p.explicacion}`;
+        } else {
+            feedback.className = 'mt-4 p-4 rounded-xl text-sm leading-relaxed bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 text-red-800 dark:text-red-300';
+            feedback.innerHTML = `<i class="fas fa-circle-xmark mr-2"></i><strong>Incorrecto.</strong> ${p.explicacion}`;
+        }
+
+        // Si respondió todas, mostrar botón de resultados
+        if (preguntasRespondidas === preguntas.length) {
+            document.getElementById('btnVerResultados').classList.remove('hidden');
+            document.getElementById('btnVerResultados').classList.add('flex');
+            setTimeout(() => {
+                document.getElementById('btnVerResultados').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 300);
+        }
+    }
+
+    document.getElementById('btnVerResultados').addEventListener('click', () => {
+        const correctas = respuestasUsuario.filter((r, i) => r === preguntas[i].correcta).length;
+        const pct = Math.round((correctas / preguntas.length) * 100);
+        const div = document.getElementById('resultadoFinal');
+        const puntuacion = document.getElementById('puntuacionTexto');
+        const mensaje = document.getElementById('mensajeResultado');
+
+        puntuacion.textContent = `${correctas} / ${preguntas.length} correctas (${pct}%)`;
+
+        if (pct >= 90) {
+            div.classList.remove('hidden');
+            div.classList.add('border-green-400', 'bg-green-50', 'dark:bg-green-900/20', 'text-green-800', 'dark:text-green-300');
+            mensaje.innerHTML = '🏆 ¡Excelente! Dominas los fundamentos clínicos de la EDA pediátrica.';
+        } else if (pct >= 70) {
+            div.classList.remove('hidden');
+            div.classList.add('border-amber-400', 'bg-amber-50', 'dark:bg-amber-900/20', 'text-amber-800', 'dark:text-amber-300');
+            mensaje.innerHTML = '👍 Buen resultado. Repasa los conceptos donde fallaste y vuelve a intentarlo.';
+        } else {
+            div.classList.remove('hidden');
+            div.classList.add('border-red-400', 'bg-red-50', 'dark:bg-red-900/20', 'text-red-800', 'dark:text-red-300');
+            mensaje.innerHTML = '📖 Necesitas repasar el contenido. ¡No te rindas! Cada error es una oportunidad de aprender.';
+        }
+
+        document.getElementById('btnReiniciar').classList.remove('hidden');
+        document.getElementById('btnReiniciar').classList.add('flex');
+        div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+
+    document.getElementById('btnReiniciar').addEventListener('click', () => {
+        renderizarQuiz();
+        document.getElementById('autoevaluacion').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // Inicializar quiz
+    renderizarQuiz();
+    </script>
+</body>
+</html>
